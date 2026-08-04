@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Healing Hands Lifecycle Strategy</title>
+<style>
+:root{
+  --navy:#000255; --navy2:#00058D; --accent:#00058D; --accent-bg:#e7e8f6;
+  --blue:#1f34d6; --red:#c0473f; --green:#2e8b6f; --gold:#b9791b; --slate:#5a6b7c;
+  --ink:#101233; --mut:#5d6688; --line:#e6e7ee; --bg:#f4f5f9; --card:#ffffff;
+  --shadow:0 1px 3px rgba(0,2,85,.07),0 6px 18px rgba(0,2,85,.05);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+header.top{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:38px 0 30px}
+header.top h1{margin:0;font-size:27px;letter-spacing:-.4px;font-weight:700}
+header.top .sub{color:#c3cbea;font-size:14px;margin-top:8px;max-width:780px}
+header.top .links{margin-top:14px;font-size:12px}
+header.top .links a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 13px;margin-right:8px;display:inline-block}
+header.top .links a:hover{background:rgba(255,255,255,.12)}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);box-shadow:0 1px 6px rgba(16,40,70,.05)}
+nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto}
+nav.tabs .tab{font:inherit;background:none;border:0;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--mut);padding:14px 16px;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs .tab:hover{color:var(--navy)}
+nav.tabs .tab.active{color:var(--navy);border-bottom-color:var(--accent)}
+main .wrap{padding:10px 24px 40px}
+.panel{display:none}
+.panel.active{display:block}
+section{padding:34px 0}
+section + section{border-top:1px solid var(--line)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+h2.sec{font-size:22px;margin:0 0 10px;letter-spacing:-.3px;max-width:820px}
+p.lead{color:var(--mut);font-size:14.5px;margin:0 0 22px;max-width:820px}
+p.lead b{color:var(--ink)}
+.story p{font-size:15px;margin:0 0 14px;max-width:770px;color:#2a3345}
+.story p b{color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 16px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.kpi .val{font-size:24px;font-weight:750;margin-top:6px;letter-spacing:-.5px;color:var(--navy)}
+.kpi .note{font-size:11.5px;color:var(--mut);margin-top:4px}
+/* ---- three strategic pillars ---- */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0 6px}
+.pillar{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:14px;padding:20px 20px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.pillar .p-num{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)}
+.pillar .p-stage{display:inline-block;align-self:flex-start;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin:8px 0 10px;background:var(--accent-bg);color:var(--accent)}
+.pillar .p-stage.retention{background:#e6f5ee;color:var(--green)}
+.pillar .p-stage.acquisition{background:#e7e9fd;color:var(--blue)}
+.pillar .p-stage.foundation{background:#eef0f4;color:var(--slate)}
+.pillar h3{margin:0 0 8px;font-size:17px;color:var(--navy);letter-spacing:-.2px;line-height:1.25}
+.pillar .p-gap{font-size:13px;color:var(--mut);margin:0 0 12px}
+.pillar .p-gap b{color:var(--ink)}
+.pillar .p-opp{font-size:13.5px;color:#2a3345;margin:auto 0 0}
+.pillar .p-opp b{color:var(--navy)}
+.pillar .p-target{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;font-weight:600;color:var(--green)}
+.pillar .p-target.acquisition{color:var(--blue)}
+.pillar .p-target.foundation{color:var(--slate)}
+.kpi-eyebrow{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--mut);margin:26px 0 12px}
+.headline-find{background:linear-gradient(120deg,#f3f4fc,#eef0fb);border:1px solid #d9dcf3;border-radius:14px;padding:22px 24px;margin:22px 0 6px}
+.headline-find .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:6px}
+.headline-find h3{margin:0 0 8px;font-size:19px;color:var(--navy);letter-spacing:-.3px}
+.headline-find p{margin:0;font-size:14px;color:#3a4358;max-width:800px}
+.headline-find p b{color:var(--navy)}
+.callout{display:flex;gap:13px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);margin:16px 0}
+.callout .ico{flex:0 0 26px;height:26px;border-radius:7px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.callout.opp{border-left-color:var(--blue)} .callout.opp .ico{background:#e7e9fd;color:var(--blue)}
+.callout.risk{border-left-color:var(--red)} .callout.risk .ico{background:#fbeceb;color:var(--red)}
+.callout h5{margin:0 0 3px;font-size:14px}
+.callout p{margin:0;font-size:13.4px;color:#3d4d5c;max-width:none}
+/* compact segmentation boxes */
+.seg-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:18px}
+.seg-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.seg-top{display:flex;align-items:center;justify-content:space-between}
+.seg-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.seg-ico svg{width:19px;height:19px}
+.seg-ico.ready{background:#e6f5ee;color:var(--green)}
+.seg-ico.needsdata{background:#fdf3e3;color:var(--gold)}
+.seg-card h4{margin:0;font-size:13px;color:var(--navy);line-height:1.3}
+.status{display:inline-block;font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.2px}
+.status.ready{background:#e6f5ee;color:var(--green)}
+.status.needsdata{background:#fdf3e3;color:var(--gold)}
+.themes{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+.theme{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:11px;padding:14px 15px;box-shadow:var(--shadow)}
+.theme h5{margin:0 0 5px;font-size:13px;color:var(--navy)}
+.theme p{margin:0;font-size:12px;color:var(--mut);line-height:1.45}
+/* campaign categories */
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.cat-card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:11px;padding:14px 16px;box-shadow:var(--shadow)}
+.cat-card h5{margin:0 0 5px;font-size:13px;color:var(--navy)}
+.cat-card p{margin:0;font-size:12.2px;color:var(--mut);line-height:1.45}
+/* competitive */
+.compete{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.comp-card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--slate);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow)}
+.comp-card.figs{border-top-color:var(--red)}
+.comp-card h4{margin:0 0 2px;font-size:17px;color:var(--navy)}
+.comp-card .role{font-size:12px;color:var(--mut);font-style:italic;margin:0 0 12px}
+.comp-card ul{margin:0;padding-left:18px;font-size:13.2px;color:#2a3345}
+.comp-card li{margin-bottom:7px}
+.comp-card li b{color:var(--navy)}
+/* quick wins */
+.qw-card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;display:flex;gap:16px}
+.qw-num{flex:0 0 34px;height:34px;border-radius:9px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:750;font-size:15px}
+.qw-body{flex:1;min-width:0}
+.qw-card h4{margin:3px 0 3px;font-size:16px;color:var(--navy)}
+.qw-goal{font-size:12.5px;color:var(--green);font-weight:600;margin:0 0 8px}
+.qw-card ul{margin:6px 0 0;padding-left:18px;font-size:13.4px;color:#2a3345}
+.qw-card li{margin-bottom:5px}
+.qw-tags{margin-top:11px;display:flex;flex-wrap:wrap;gap:6px}
+.qw-tag{font-size:10.5px;font-weight:600;background:var(--accent-bg);color:var(--accent);padding:3px 9px;border-radius:20px}
+.qw-tag.dep{background:#fdf3e3;color:var(--gold)}
+/* big swings (detailed) */
+.bigswing{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow);margin-bottom:22px}
+.swing-h{font-size:19px;color:var(--navy);margin:0 0 6px}
+.swing-thesis{font-size:14px;color:#3a4358;margin:0 0 18px;max-width:840px}
+.swing-thesis b{color:var(--navy)}
+.swing-block{margin-bottom:16px}
+.swing-block:last-child{margin-bottom:0}
+.swing-block h5{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin:0 0 6px}
+.swing-block p{margin:0 0 6px;font-size:13.6px;color:#2a3345}
+.swing-block ul{margin:4px 0 0;padding-left:19px;font-size:13.6px;color:#2a3345}
+.swing-block li{margin-bottom:6px}
+.swing-block li b{color:var(--navy)}
+.swing-flag{background:#fff8ec;border:1px solid #f1dcae;border-radius:10px;padding:13px 16px;font-size:12.6px;color:#6d5526;margin-top:6px}
+.swing-flag b{color:#5a441c}
+/* open questions */
+.oq{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:11px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:12px}
+.oq h5{margin:0 0 5px;font-size:14px;color:var(--navy)}
+.oq p{margin:0 0 6px;font-size:13.2px;color:#2a3345}
+.oq p:last-child{margin-bottom:0}
+.oq .owner{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--gold)}
+/* testing roadmap spreadsheet */
+.tablewrap{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.ttable{width:100%;min-width:820px;border-collapse:collapse;font-size:12.4px;background:var(--card)}
+.ttable th{background:var(--navy);color:#fff;text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.ttable td{border-top:1px solid var(--line);padding:10px 12px;vertical-align:top;color:#2a3345}
+.ttable tr:nth-child(even) td{background:#fafbfd}
+.ttable .c-launch{font-weight:700;color:var(--navy);white-space:nowrap}
+.ttable .c-test{font-weight:650;color:var(--navy)}
+.ttable .c-pri{font-weight:700;white-space:nowrap}
+.ttable .c-pri.p1{color:var(--green)}
+.ttable .c-pri.p2{color:var(--gold)}
+.ttable .c-pri.found{color:var(--slate)}
+.ttable .c-pri.p3{color:var(--slate)}
+.ttable tr.cat td{background:var(--accent-bg);color:var(--navy);font-weight:700;text-transform:uppercase;letter-spacing:.4px;font-size:10.5px;padding:9px 12px}
+/* execution gantt */
+.gantt{margin-top:10px;overflow-x:auto;padding-bottom:6px}
+.gantt-inner{min-width:780px}
+.gantt-phase,.gantt-weeks,.gantt-row{display:grid;grid-template-columns:200px repeat(12,1fr)}
+.g-phase{font-size:10.5px;font-weight:700;color:#fff;padding:5px 8px;border-radius:6px;margin:0 2px 8px;text-align:center;white-space:nowrap;overflow:hidden}
+.g-phase.p1{background:var(--slate)}.g-phase.p2{background:var(--blue)}.g-phase.p3{background:var(--gold)}
+.gantt-weeks .wk{font-size:10px;color:var(--mut);text-align:center;padding:4px 0;border-left:1px solid var(--line)}
+.gantt-row{align-items:center;border-top:1px solid var(--line);min-height:40px}
+.g-label{grid-column:1;font-size:12.3px;color:var(--ink);padding:9px 12px 9px 0;line-height:1.3}
+.g-bar{height:20px;border-radius:6px;margin:0 2px;display:flex;align-items:center;padding:0 8px;font-size:9.5px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden}
+.g-bar.found{background:var(--slate)}.g-bar.qw{background:var(--green)}.g-bar.swing{background:var(--blue)}
+.gantt-legend{display:flex;gap:18px;margin-top:14px;font-size:11.5px;color:var(--mut)}
+.gantt-legend .lg{display:flex;align-items:center;gap:6px}
+.gantt-legend .lg::before{content:"";width:12px;height:12px;border-radius:3px;display:inline-block}
+.gantt-legend .lg.found::before{background:var(--slate)}
+.gantt-legend .lg.qw::before{background:var(--green)}
+.gantt-legend .lg.swing::before{background:var(--blue)}
+.note-box{background:#fff8ec;border:1px solid #f1dcae;border-radius:10px;padding:13px 16px;font-size:12.6px;color:#6d5526;margin-top:20px}
+.note-box b{color:#5a441c}
+.draft{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:#fdf3e3;color:var(--gold);padding:3px 9px;border-radius:20px;margin-left:8px;vertical-align:middle}
+footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);font-size:11.5px}
+@media(max-width:860px){.pillars{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.seg-grid{grid-template-columns:repeat(3,1fr)}.themes{grid-template-columns:1fr 1fr}.cats{grid-template-columns:1fr}.compete{grid-template-columns:1fr}}
+@media(max-width:560px){.seg-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>Healing Hands Lifecycle Strategy</h1>
+    <div class="sub">We began with a customer journey mapping exercise to gain a high-level view of Healing Hands' existing lifecycle program, from how the brand shows up in search, social, and AI, through purchase and post-purchase. This audit identifies the highest-impact opportunities to grow lifecycle revenue by fixing the flows that already carry the program, converting an audience that opens but doesn't click, and building the second order into a repeatable habit.</div>
+    <div class="links">
+      <a href="https://www.figma.com/board/4FGkqzxw0u1pFe0EO98R9k/Caresmatic-Customer-Lifecycle-Journey-Map?node-id=20009-555" target="_blank" rel="noopener">Journey Map (Figma)</a>
+      <a href="https://lenaverbose.github.io/healing-hands-dashboard/" target="_blank" rel="noopener">Performance Dashboard</a>
+    </div>
+  </div>
+</header>
+<nav class="tabs"><div class="wrap">
+  <button class="tab active" data-tab="overview" type="button">Overview</button>
+  <button class="tab" data-tab="quickwins" type="button">Quick Wins</button>
+  <button class="tab" data-tab="bigswings" type="button">Big Swings</button>
+  <button class="tab" data-tab="testing" type="button">Testing Roadmap</button>
+  <button class="tab" data-tab="execution" type="button">Execution Plan</button>
+</div></nav>
+<main><div class="wrap">
+  <!-- ============ OVERVIEW ============ -->
+  <div class="panel active" id="overview">
+    <section class="story">
+      <div class="eyebrow">01 · The Story</div>
+      <h2 class="sec">The flows already carry the program. They're just leaking at every seam.</h2>
+      <p class="lead">Healing Hands has the structure most brands are still trying to build: automation drives the majority of revenue on a fraction of the sends. The problem isn't that the machine is missing, it's that <b>every stage of it underperforms its own benchmark</b> — Welcome at half, Abandoned Cart at a fifth, and two in three customers who never come back for a second order. Our roadmap organizes around <b>three strategic themes</b>, each tied to an outcome.</p>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="p-num">Theme 01</div>
+          <span class="p-stage foundation">Cuts across both</span>
+          <h3>Fix the flows that already do the work</h3>
+          <p class="p-gap">Flows earn <b>68% of program revenue from 11% of sends</b>, but Welcome sits at $1.32 RPR against a ~$2.35 benchmark and Abandoned Cart at $0.69 against $3.00&ndash;3.65 — the single biggest gap in the program.</p>
+          <p class="p-opp">Folding the winning Abandoned Checkout structure into Cart, reworking Welcome 2 and 3, and adding sunset logic fixes the highest-leverage surface area in the program without building anything net new.</p>
+          <div class="p-target foundation">The layer that amplifies Themes 02 and 03</div>
+        </div>
+        <div class="pillar">
+          <div class="p-num">Theme 02</div>
+          <span class="p-stage acquisition">Conversion</span>
+          <h3>Earn the click, not just the open</h3>
+          <p class="p-gap">Email opens run <b>58%</b> — well above norm — while campaign clicks sit at <b>0.64%</b> against a 2&ndash;5% target. Campaigns carry 89% of send volume for 32% of revenue at $0.04 per send.</p>
+          <p class="p-opp">Clearer offers and product-led modules, a calendar rebalanced toward what actually earns, and paid creative threaded into lifecycle so what someone clicked shapes what they see next.</p>
+          <div class="p-target acquisition">Target: campaign click rate 0.64% &rarr; 2%+</div>
+        </div>
+        <div class="pillar">
+          <div class="p-num">Theme 03</div>
+          <span class="p-stage retention">Retention</span>
+          <h3>Win the second order</h3>
+          <p class="p-gap"><b>Two in three customers are one-and-done</b>, so median LTV of ~$131 is largely unrealized. The reorder clock is predictable at ~59 days and nothing in the program is timed to it.</p>
+          <p class="p-opp">A replenishment flow on the 59-day clock, a real post-purchase cross-sell, and a loyalty program that makes the second order feel like membership rather than another discount.</p>
+          <div class="p-target">Target: second-order rate up, at zero acquisition cost</div>
+        </div>
+      </div>
+      <div class="kpi-eyebrow">The numbers behind it</div>
+      <div class="kpis">
+        <div class="kpi"><div class="lab">Program revenue</div><div class="val">$522K</div><div class="note">$356K flows &middot; $166K campaigns</div></div>
+        <div class="kpi"><div class="lab">Flow share of revenue</div><div class="val">68%</div><div class="note">from ~11% of total sends</div></div>
+        <div class="kpi"><div class="lab">One-and-done rate</div><div class="val">~2 in 3</div><div class="note">never place a second order</div></div>
+        <div class="kpi"><div class="lab">Median LTV</div><div class="val">$131</div><div class="note">largely unrealized</div></div>
+      </div>
+    </section>
+    <section>
+      <div class="eyebrow">02 · The Conversion Gap</div>
+      <h2 class="sec">Healing Hands wins the open and loses the order.</h2>
+      <p class="lead">The audience shows up at a rate most brands would envy. What happens after the open is where the revenue goes missing — and it's the same gap in flows and campaigns alike.</p>
+      <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kpi"><div class="lab">Email open rate</div><div class="val">58%</div><div class="note">well above industry norm</div></div>
+        <div class="kpi"><div class="lab">Campaign click rate</div><div class="val">0.64%</div><div class="note">vs. a 2-5% target</div></div>
+        <div class="kpi"><div class="lab">Campaign revenue / send</div><div class="val">$0.04</div><div class="note">89% of volume &middot; 32% of revenue</div></div>
+      </div>
+      <div class="kpi-eyebrow">Where the flow gaps sit</div>
+      <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kpi"><div class="lab">Welcome RPR</div><div class="val">$1.32</div><div class="note">vs. ~$2.35 benchmark</div></div>
+        <div class="kpi"><div class="lab">Abandoned Cart RPR</div><div class="val">$0.69</div><div class="note">vs. $3.00-3.65 benchmark</div></div>
+        <div class="kpi"><div class="lab">Abandoned Checkout RPR</div><div class="val">$1.27</div><div class="note">same customer, better structure</div></div>
+      </div>
+      <div class="callout risk">
+        <div class="ico">!</div>
+        <div><h5>Abandoned Cart is the single biggest gap in the program.</h5>
+        <p>At $0.69 against a $3.00&ndash;3.65 benchmark, it's the furthest from where it should be. The fix is partly already built: Abandoned Checkout earns $1.27 on the same intent, so the structure that works is sitting one flow over.</p></div>
+      </div>
+      <div class="callout opp">
+        <div class="ico">&rsaquo;</div>
+        <div><h5>Subject lines are winning the open. The creative and offer aren't earning the click.</h5>
+        <p>This is the case for closing the ad-to-lifecycle creative gap: thread the color, style, and reason someone clicked in paid into the welcome and abandonment emails that follow.</p></div>
+      </div>
+      <div class="callout opp">
+        <div class="ico">&rsaquo;</div>
+        <div><h5>The winning variants are already sitting in the tests.</h5>
+        <p>The "text hero" Post Purchase variant earns roughly <b>2&times; the RPR</b> of control and hasn't been promoted to default. Promoting known winners is the fastest revenue in the roadmap.</p></div>
+      </div>
+    </section>
+    <section>
+      <div class="eyebrow">03 · The Second-Order Gap</div>
+      <h2 class="sec">The second order is where lifetime value is made, at zero acquisition cost.</h2>
+      <p class="lead">Scrubs are consumable and the reorder timing is predictable. Nothing in the program is currently built around either fact.</p>
+      <div class="headline-find">
+        <div class="tag">Headline finding</div>
+        <h3>Two in three customers never place a second order.</h3>
+        <p>Median LTV sits at <b>~$131</b> and is largely unrealized. The reorder clock runs at <b>~59 days</b>, which is short enough to build a flow around and predictable enough to time store credit to. The customers are already acquired and already paid for — the second order costs nothing to win.</p>
+      </div>
+      <div class="callout opp">
+        <div class="ico">&rsaquo;</div>
+        <div><h5>Five-star reviews are an untapped trigger.</h5>
+        <p>A customer who just told us they love the product is the highest-intent replenishment and bulk-buy audience in the file. Today that signal goes nowhere.</p></div>
+      </div>
+    </section>
+    <section>
+      <div class="eyebrow">04 · Segmentation</div>
+      <h2 class="sec">The list behaves like several audiences. Today it's treated as one.</h2>
+      <p class="lead">Six ways to segment that already have, or nearly have, the data behind them.</p>
+      <div class="seg-grid">
+        <div class="seg-card">
+          <div class="seg-top">
+            <div class="seg-ico ready" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 4 21 9 16 9"/><polyline points="3 20 3 15 8 15"/><path d="M4.5 9a7.5 7.5 0 0 1 12.4-2.8L21 9"/><path d="M3 15l4.1 3.8A7.5 7.5 0 0 0 19.5 15"/></svg></div>
+            <span class="status ready">Ready now</span>
+          </div>
+          <h4>One-time vs. repeat buyer</h4>
+        </div>
+        <div class="seg-card">
+          <div class="seg-top">
+            <div class="seg-ico ready" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.5 4.2"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></div>
+            <span class="status ready">Ready now</span>
+          </div>
+          <h4>Sets purchased</h4>
+        </div>
+        <div class="seg-card">
+          <div class="seg-top">
+            <div class="seg-ico ready" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+            <span class="status ready">Ready now</span>
+          </div>
+          <h4>Reorder window (~59d)</h4>
+        </div>
+        <div class="seg-card">
+          <div class="seg-top">
+            <div class="seg-ico ready" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 6.5 12 10 4.5 14 19.5 17.5 12 21 12"/></svg></div>
+            <span class="status ready">Ready now</span>
+          </div>
+          <h4>RFM cohort</h4>
+        </div>
+        <div class="seg-card">
+          <div class="seg-top">
+            <div class="seg-ico ready" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="status ready">Ready now</span>
+          </div>
+          <h4>SMS vs. email preference</h4>
+        </div>
+        <div class="seg-card">
+          <div class="seg-top">
+            <div class="seg-ico needsdata" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v5.5a4.5 4.5 0 0 0 9 0V3"/><path d="M10.5 12.9v2.3a5.3 5.3 0 0 0 10.5 0v-1"/><circle cx="21" cy="12.2" r="2"/></svg></div>
+            <span class="status needsdata">Needs data</span>
+          </div>
+          <h4>Occupation / specialty</h4>
+        </div>
+      </div>
+      <div class="note-box"><b>Occupation and specialty are the unlock.</b> Capturing them in the loyalty signup flow is what makes identity and tenure segmentation possible later — the same lever that makes Nurses Week work all year rather than one week of it.</div>
+    </section>
+    <section>
+      <div class="eyebrow">05 · Batch Comms</div>
+      <h2 class="sec">89% of sends for 32% of revenue.</h2>
+      <p class="lead">Campaigns earn <b>$166K at $0.04 per send</b>, with the same conversion gap as the flows: 58% open, 0.64% click. The question isn't whether to send fewer, it's what each category is actually being asked to do.</p>
+      <div class="cats">
+        <div class="cat-card"><h5>Revenue</h5><p>Promotions, sales, product drops, bundles. Top earners are Sale and Nurses Week.</p></div>
+        <div class="cat-card"><h5>Social proof</h5><p>Reviews, testimonials, UGC, day in the life.</p></div>
+        <div class="cat-card"><h5>Brand + USP</h5><p>Comfort and style positioning, how the product is made, sourcing origin.</p></div>
+        <div class="cat-card"><h5>Educational</h5><p>Fit and sizing guides, scrubs care, how to build a rotation, comparison content.</p></div>
+        <div class="cat-card"><h5>Recurring comms</h5><p>Monthly bestsellers, top picks, common questions.</p></div>
+        <div class="cat-card"><h5>Seasonal + identity</h5><p>Promotional (end of season) and meaning-led (Nurses Week).</p></div>
+      </div>
+      <div class="callout opp">
+        <div class="ico">&rsaquo;</div>
+        <div><h5>Rebalance the calendar toward what earns.</h5>
+        <p>Sale and Nurses Week are the top-earning categories; Saturday is the least efficient send day. Shifting volume off Saturday and toward Mon/Tue is copy-and-calendar work, not a build.</p></div>
+      </div>
+    </section>
+    <section>
+      <div class="eyebrow">06 · Competitive Analysis</div>
+      <h2 class="sec">FIGS wins on identity. Cherokee wins on efficiency.</h2>
+      <p class="lead">The two most useful comparison points sit on either side of Healing Hands — one proves the ceiling, one proves the mechanics.</p>
+      <div class="compete">
+        <div class="comp-card figs">
+          <h4>FIGS</h4>
+          <p class="role">Closest competitor</p>
+          <ul>
+            <li>Customers are worth more: <b>$216 revenue per active customer</b>, <b>$114 AOV</b>, <b>NPS 80</b> (trailing 12 months).</li>
+            <li><b>No loyalty or points program.</b> They run on community and identity — referral, birthday reward, newsletter coupons.</li>
+            <li>Retention comes from brand, not rewards: an ambassador program of diverse healthcare specialties, embedded cause work (student grants, nurse mental health), and seasonal or limited-edition color drops.</li>
+            <li>They grow LTV by leaning into <b>wardrobe expansion</b> — underscrubs, outerwear, layers.</li>
+          </ul>
+        </div>
+        <div class="comp-card">
+          <h4>Cherokee</h4>
+          <p class="role">Careismatic sibling &mdash; workhorse / value products</p>
+          <ul>
+            <li>Positioned around <b>"built for everyone"</b> with wider distribution (uniform retailers, nursing schools) and accessible pricing.</li>
+            <li><b>Word of mouth is the acquisition driver.</b></li>
+            <li>More efficient dollars per send: <b>~$1/send on flows</b>, with SMS Welcome strong at <b>~$4/send</b>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout opp">
+        <div class="ico">&rsaquo;</div>
+        <div><h5>The read: identity can outperform discount, and the sibling brand proves the flow economics.</h5>
+        <p>FIGS holds a higher-value customer with no points program at all, which is the case for building loyalty around belonging rather than a percentage. Cherokee's flow efficiency is the near-term proof that Healing Hands' flow benchmarks are reachable inside the same org, on the same platform.</p></div>
+      </div>
+    </section>
+    <section>
+      <div class="eyebrow">07 · What Ties It Together</div>
+      <h2 class="sec">The same five threads run through all of it.</h2>
+      <p class="lead">These aren't five separate problems. They're the reasons the same issues keep surfacing across different flows.</p>
+      <div class="themes">
+        <div class="theme"><h5>Everything answers price</h5><p>Cart, browse, and welcome all lead with a discount. Fit, returns, guarantees, and color guidance are the objections that actually go unanswered.</p></div>
+        <div class="theme"><h5>Triggers ignore the clock we already have</h5><p>The ~59-day reorder window and sets-purchased are both known and neither drives a trigger today.</p></div>
+        <div class="theme"><h5>Winners aren't being promoted</h5><p>Tests are running and producing results — the text hero variant, the checkout structure — but the wins aren't shipping as defaults.</p></div>
+        <div class="theme"><h5>Identity is underused</h5><p>Nurses Week is a top earner and FIGS runs its whole retention story on identity. Occupation isn't captured anywhere yet.</p></div>
+        <div class="theme"><h5>List hygiene is missing</h5><p>No sunset logic means deliverability risk on the open rate that's currently the program's biggest strength, plus avoidable overage.</p></div>
+      </div>
+    </section>
+    <section>
+      <div class="eyebrow">08 · Measurement to Track Success</div>
+      <h2 class="sec">Five numbers tell us whether this is working.<span class="draft">Targets in draft</span></h2>
+      <p class="lead">Baselines come straight from the performance dashboard. Goals are pegged to the benchmarks cited in the audit or to Cherokee's internal best.</p>
+      <div class="tablewrap">
+        <table class="ttable">
+          <thead>
+            <tr><th>Metric</th><th>Today</th><th>Goal</th><th>Moved by</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="c-test">Abandoned Cart RPR</td>
+              <td>$0.69</td>
+              <td>$1.27 near term (match Abandoned Checkout), toward the $3.00&ndash;3.65 benchmark</td>
+              <td>Fold in checkout structure, expand SMS leg, test beyond price</td>
+            </tr>
+            <tr>
+              <td class="c-test">Welcome RPR</td>
+              <td>$1.32</td>
+              <td>~$2.35 benchmark</td>
+              <td>Rework emails 2 &amp; 3: fit/returns guarantee, color guide, build your rotation</td>
+            </tr>
+            <tr>
+              <td class="c-test">Second-order rate</td>
+              <td>~1 in 3 (2/3 one-and-done)</td>
+              <td>Directional lift over 12 months</td>
+              <td>Replenishment flow on the 59d clock, post-purchase cross-sell, loyalty</td>
+            </tr>
+            <tr>
+              <td class="c-test">Median LTV</td>
+              <td>$131</td>
+              <td>Directional, driven by second-order gains</td>
+              <td>Repeat-purchase gains plus wardrobe-expansion cross-sell</td>
+            </tr>
+            <tr>
+              <td class="c-test">Campaign click rate</td>
+              <td>0.64%</td>
+              <td>2%+ (low end of target range)</td>
+              <td>Clearer offers/CTAs, product-led modules, calendar rebalance off Saturday</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-box"><b>How this gets reported:</b> the global holdout, campaign holdouts, and existing-vs-new A/Bs in the Testing Roadmap all feed these numbers, so the before/after story stays grounded in incremental lift rather than attributed revenue. Goal columns are a first pass and should be pressure-tested against Q3 volume assumptions before they're committed to.</div>
+    </section>
+    <section>
+      <div class="eyebrow">09 · Open Questions &amp; Data Follow-Ups</div>
+      <h2 class="sec">Three things to resolve before or during the readout.</h2>
+      <p class="lead">Raised in the working doc and carried forward here so they get answered rather than buried.</p>
+      <div class="oq">
+        <h5>1 · Does the sunset and list-cleaning work extend to Cherokee?</h5>
+        <p>Sunset logic is a Healing Hands quick win, but the deliverability and overage case is brand-agnostic. If Cherokee has the same gap, this should be scoped once and shipped across both rather than twice.</p>
+        <p class="owner">Confirm with: Dang / Mark</p>
+      </div>
+      <div class="oq">
+        <h5>2 · Will Browse Abandonment volume drop once the underlying issue is resolved?</h5>
+        <p>The recommendation to tighten targeting to repeat and high-dwell browsers assumes today's trigger volume is real. If the issue raised in chat is inflating entries, the sizing on this changes and the targeting fix may be smaller than it looks.</p>
+        <p class="owner">Blocked on: issue resolution before sizing</p>
+      </div>
+      <div class="oq">
+        <h5>3 · Is Welcome actually suppressing Abandoned Cart, or is the attribution clean?</h5>
+        <p>The working hypothesis was that Welcome suppresses Cart revenue. The attribution model is linear (email: 1-day open, 3-day click; SMS: 1-day click), so credit should be split evenly and suppression shouldn't be the explanation. This needs one more pass before we conclude the Cart gap is real and not an artifact — and it should be settled <b>before</b> we judge any Cart rebuild against baseline.</p>
+        <p class="owner">In progress: KJ re-checking</p>
+      </div>
+    </section>
+  </div>
+  <!-- ============ QUICK WINS ============ -->
+  <div class="panel" id="quickwins">
+    <section>
+      <div class="eyebrow">Quick Wins</div>
+      <h2 class="sec">Six moves that tune what already works.</h2>
+      <p class="lead">In priority order, and testing sits underneath all of them. None of these require a net-new build.</p>
+      <div class="qw-card">
+        <div class="qw-num">1</div>
+        <div class="qw-body">
+          <h4>Fold the Abandoned Checkout structure into Abandoned Cart</h4>
+          <div class="qw-goal">Goal: close the single biggest gap in the program &mdash; $0.69 RPR against a $3.00-3.65 benchmark.</div>
+          <ul>
+            <li>Abandoned Checkout already earns <b>$1.27 vs. $0.69</b> on the same intent. The structure that works is one flow over.</li>
+            <li>Expand the higher-converting SMS leg, which is the fastest lift here since it's copy only.</li>
+            <li>Test beyond the price objection: fit, returns policy, and guarantees are what actually stop the purchase.</li>
+          </ul>
+          <div class="qw-tags"><span class="qw-tag">Metric: Cart RPR</span><span class="qw-tag">Test: beyond-price messaging</span><span class="qw-tag dep">Confirm first: attribution read</span></div>
+        </div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-num">2</div>
+        <div class="qw-body">
+          <h4>Promote the already-winning variants to default</h4>
+          <div class="qw-goal">Goal: bank the revenue from tests that already concluded.</div>
+          <ul>
+            <li>The <b>"text hero" Post Purchase variant earns roughly 2&times; the RPR</b> of control and is still running as a test rather than the default.</li>
+            <li>Audit every concluded test for winners that were never promoted, and set a standing rule that a called winner ships as default within one cycle.</li>
+          </ul>
+          <div class="qw-tags"><span class="qw-tag">Metric: post-purchase RPR</span><span class="qw-tag">Effort: lowest in the roadmap</span></div>
+        </div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-num">3</div>
+        <div class="qw-body">
+          <h4>Rework Welcome emails 2 &amp; 3</h4>
+          <div class="qw-goal">Goal: lift Welcome RPR from $1.32 toward the ~$2.35 benchmark.</div>
+          <ul>
+            <li>Lead email 2 with the fit and returns guarantee, the objection a discount doesn't answer.</li>
+            <li>Add a color and collection guide so a first-time buyer can choose confidently.</li>
+            <li>Introduce "build your rotation" early, setting the expectation of a second order before the first one has even shipped.</li>
+          </ul>
+          <div class="qw-tags"><span class="qw-tag">Metric: Welcome RPR</span><span class="qw-tag">Test: welcome messaging</span><span class="qw-tag">Segment: first-time</span></div>
+        </div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-num">4</div>
+        <div class="qw-body">
+          <h4>Add sunset + list-cleaning logic</h4>
+          <div class="qw-goal">Goal: protect the 58% open rate and cut avoidable overage.</div>
+          <ul>
+            <li>Build a sunset path for churned and non-engaging profiles rather than continuing to send into them.</li>
+            <li>Deliverability is currently the program's biggest asset. Protecting it is cheaper than recovering it.</li>
+            <li>Overage savings are a direct cost line, not just a hygiene argument.</li>
+          </ul>
+          <div class="qw-tags"><span class="qw-tag">Metric: deliverability, send cost</span><span class="qw-tag dep">Open question: extend to Cherokee?</span></div>
+        </div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-num">5</div>
+        <div class="qw-body">
+          <h4>Tighten Browse Abandonment targeting</h4>
+          <div class="qw-goal">Goal: make the touch earn its place by reserving it for real intent.</div>
+          <ul>
+            <li>Reserve the trigger for <b>repeat and high-dwell browsers</b> rather than any pageview.</li>
+            <li>Take it beyond price: lead with the specific color or collection someone browsed.</li>
+            <li>Keep the touch lighter than cart, since the intent signal is weaker.</li>
+          </ul>
+          <div class="qw-tags"><span class="qw-tag">Metric: browse-to-order</span><span class="qw-tag">Test: color/collection lead</span><span class="qw-tag dep">Sizing depends on: trigger issue</span></div>
+        </div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-num">6</div>
+        <div class="qw-body">
+          <h4>Shift campaign volume off Saturdays</h4>
+          <div class="qw-goal">Goal: raise revenue per send without adding a single message.</div>
+          <ul>
+            <li>Test Monday and Tuesday against the current Saturday volume.</li>
+            <li>Rebalance the calendar toward the categories that actually earn &mdash; Sale and Nurses Week are the top performers.</li>
+            <li>Pair with clearer offers and CTAs plus product-led modules on awareness themes.</li>
+          </ul>
+          <div class="qw-tags"><span class="qw-tag">Metric: campaign revenue/send</span><span class="qw-tag">Test: send day</span><span class="qw-tag">Effort: calendar only</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- ============ BIG SWINGS ============ -->
+  <div class="panel" id="bigswings">
+    <section>
+      <div class="eyebrow">Big Swings</div>
+      <h2 class="sec">Four structural bets behind the retention and conversion gaps.</h2>
+      <p class="lead">Higher lift and higher ceiling than the quick wins. Each cuts across more than one flow, and the last two need buy-in beyond Lifecycle.</p>
+      <div class="bigswing">
+        <h3 class="swing-h">1 · The full Post Purchase cross-sell flow</h3>
+        <p class="swing-thesis">Two in three Healing Hands customers never come back, and median LTV of <b>~$131</b> sits mostly unrealized as a result. The second order is where lifetime value is made and it costs <b>nothing in acquisition</b> to win. The bet is to build the flow around two things the data already tells us: what someone bought, and when they'll need more.</p>
+        <div class="swing-block">
+          <h5>Time it to the clock we already have</h5>
+          <ul>
+            <li>Build a <b>replenishment flow timed to the ~59-day reorder window</b>, triggered off sets purchased plus elapsed time rather than a fixed calendar date.</li>
+            <li>Someone who bought one set is a different conversation than someone who bought four. Quantity should change both the timing and the message.</li>
+          </ul>
+        </div>
+        <div class="swing-block">
+          <h5>Complete the set, then expand the wardrobe</h5>
+          <ul>
+            <li>Recommend <b>coordinated items</b> against what was actually purchased &mdash; set completion first, since it's the easiest yes.</li>
+            <li>Follow FIGS into <b>wardrobe expansion</b>: underscrubs, outerwear, layers. It's how they grow LTV and it's a category Healing Hands can speak to.</li>
+          </ul>
+        </div>
+        <div class="swing-block">
+          <h5>Use the signals sitting idle</h5>
+          <ul>
+            <li>Trigger replenishment and bulk-buy prompts off <b>5-star reviews</b>. Someone who just said they love it is the highest-intent reorder audience in the file.</li>
+            <li>Roll out the winning <b>"text hero" variant</b> as the default here rather than continuing to split traffic against a known loser.</li>
+          </ul>
+        </div>
+        <div class="swing-flag"><b>What it needs:</b> a product-level view of what constitutes a "set" so coordinated recommendations are accurate, and confirmation that review events are flowing cleanly into Klaviyo as triggerable signals.</div>
+      </div>
+      <div class="bigswing">
+        <h3 class="swing-h">2 · Loyalty program relaunch</h3>
+        <p class="swing-thesis">Reorder timing is predictable at ~59 days, scrubs are consumable, and Nurses Week performance suggests <b>identity outperforms discount</b> for this audience. FIGS holds a materially more valuable customer ($216 per active customer, NPS 80) with <b>no points program at all</b> — which says the moat is belonging, not a percentage. Loyalty should be the front door to the program, not a tab on the site.</p>
+        <div class="swing-block">
+          <h5>Launch mechanics</h5>
+          <ul>
+            <li>Launch on <b>earn and redeem</b> &mdash; store credit back per dollar spent. Simple enough to explain in a subject line.</li>
+            <li>Make loyalty the <b>main offer entry</b>: "sign up for 15% off" routes into the program rather than dropping a flat code.</li>
+            <li>Capture <b>occupation and specialty in the signup flow</b>. That single field unlocks identity and tenure segmentation for everything downstream.</li>
+          </ul>
+        </div>
+        <div class="swing-block">
+          <h5>Embed it, don't isolate it</h5>
+          <ul>
+            <li>Post-purchase states credit earned and progress to the next reward.</li>
+            <li>Cart and checkout can reference a store-credit balance instead of a fresh discount.</li>
+            <li>Winback can lead with "you have $X waiting" rather than training customers to wait for a code.</li>
+          </ul>
+        </div>
+        <div class="swing-block">
+          <h5>Future phase</h5>
+          <ul>
+            <li><b>Time store credit expiry or bonus windows to the 59-day reorder clock</b>, so the incentive lands exactly when the need does.</li>
+            <li>Borrow from what works next door: FIGS runs ambassadors across diverse specialties and embeds cause work. Occupation capture is what makes that addressable.</li>
+          </ul>
+        </div>
+        <div class="swing-flag"><b>What it needs:</b> pending relaunch with Rise.ai and gated on the Shopify migration. Cross-functional with product and site teams because it changes signup capability, not just email. Tiering (flat vs. tiered, milestone or career-anniversary tiers) isn't defined &mdash; recommend a scoped loyalty PRD kickoff before build.</div>
+      </div>
+      <div class="bigswing">
+        <h3 class="swing-h">3 · Winback on RFM cohort movement</h3>
+        <p class="swing-thesis">Today's lapse logic runs on a clock. The better trigger is <b>movement between RFM cohorts</b> &mdash; catching someone the moment their behavior changes rather than waiting for a fixed number of days to elapse on a customer who may have already gone.</p>
+        <div class="swing-block">
+          <h5>Trigger on the change, not the calendar</h5>
+          <ul>
+            <li>Enter the flow when a customer <b>drops a cohort</b>, with exit logic the moment they purchase.</li>
+            <li>Layer in the inputs we already have: <b>how many sets they previously bought</b> and where they sit against the reorder window.</li>
+          </ul>
+        </div>
+        <div class="swing-block">
+          <h5>Escalate message before discount</h5>
+          <ul>
+            <li>First touch reminds and resurfaces the color or collection they bought. Incentive comes second, deadline third.</li>
+            <li>A lapsed one-time buyer and a former repeat buyer are different conversations and shouldn't get the same email.</li>
+          </ul>
+        </div>
+        <div class="swing-flag"><b>What it needs:</b> RFM scoring stood up in Klaviyo and agreement on cohort definitions before the flow can trigger on movement between them.</div>
+      </div>
+      <div class="bigswing">
+        <h3 class="swing-h">4 · Integrate paid creative into lifecycle</h3>
+        <p class="swing-thesis">When someone enters lifecycle, all we keep is an email address &mdash; even though they already told us a great deal by <b>which ad they clicked</b>. With opens at 58% and clicks at 0.64%, the creative and offer are the gap, and the most relevant creative we have is the one that already earned their attention.</p>
+        <div class="swing-block">
+          <h5>Thread the signal through</h5>
+          <ul>
+            <li>Carry the <b>color and style someone clicked in paid</b> into the popup, welcome series, and abandonment emails.</li>
+            <li>Someone who clicked a specific collection should see that collection in the emails that follow, not a generic bestsellers grid.</li>
+          </ul>
+        </div>
+        <div class="swing-block">
+          <h5>Fix how we test while we're here</h5>
+          <ul>
+            <li>Run <b>fewer, bigger 50/50 A/B tests</b> with a pre-set primary metric and an order threshold agreed before launch.</li>
+            <li>The current pattern produces results that never quite conclude. Fewer tests with real power beats more tests with none.</li>
+          </ul>
+        </div>
+        <div class="swing-flag"><b>What it needs:</b> cross-functional buy-in from paid media and product, plus an agreed ad taxonomy and UTM structure so creative attributes scale beyond a first manual list.</div>
+      </div>
+    </section>
+  </div>
+  <!-- ============ TESTING ROADMAP ============ -->
+  <div class="panel" id="testing">
+    <section>
+      <div class="eyebrow">Testing Roadmap</div>
+      <h2 class="sec">Grouped by category.<span class="draft">Draft</span></h2>
+      <p class="lead">Measurement is the throughline. A <b>global holdout</b> tells us what lifecycle is worth over time; <b>holdouts on every new campaign</b> read incremental lift rather than attributed revenue; and <b>existing-vs-new A/Bs</b> prove the rebuilds. The standing rule underneath all of it: <b>fewer, bigger 50/50 tests with a pre-set primary metric and order threshold</b> — and a called winner ships as default within one cycle.</p>
+      <div class="tablewrap">
+        <table class="ttable">
+          <thead>
+            <tr><th>Test</th><th>Area</th><th>What we're testing</th><th>Primary metric</th><th>Effort</th><th>Priority</th></tr>
+          </thead>
+          <tbody>
+            <tr class="cat"><td colspan="6">Promote what already won</td></tr>
+            <tr>
+              <td class="c-test">Text hero as default</td>
+              <td>Post-purchase</td>
+              <td>Ship the winning variant (~2&times; RPR) as default and confirm the lift holds at full volume.</td>
+              <td>Post-purchase RPR</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Concluded-test audit</td>
+              <td>Program-wide</td>
+              <td>Sweep every concluded test for winners never promoted to default.</td>
+              <td>Revenue per recipient</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr class="cat"><td colspan="6">Holdouts &amp; incrementality</td></tr>
+            <tr>
+              <td class="c-test">Global lifecycle holdout</td>
+              <td>Program-wide</td>
+              <td>A group held out of all lifecycle sends, so we can read lifecycle's total incremental impact over time.</td>
+              <td>Incremental revenue vs. holdout</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri found">Always-on</td>
+            </tr>
+            <tr>
+              <td class="c-test">New-campaign holdouts</td>
+              <td>Every new campaign</td>
+              <td>Each new campaign launches with a holdout, so we measure incremental lift instead of attributed revenue.</td>
+              <td>Incremental lift</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri found">Standard</td>
+            </tr>
+            <tr>
+              <td class="c-test">Cart attribution validation</td>
+              <td>Welcome + Cart</td>
+              <td>Settle whether Welcome is suppressing Abandoned Cart revenue or the linear model is splitting credit cleanly. Must resolve before judging any Cart rebuild.</td>
+              <td>Flow revenue split</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Existing vs. new (A/B)</td>
+              <td>Rebuilt flows &amp; templates</td>
+              <td>Test each rebuild against the current version, including the EDS build against current templates.</td>
+              <td>Conversion, revenue per recipient</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr class="cat"><td colspan="6">Updates to existing flows</td></tr>
+            <tr>
+              <td class="c-test">Checkout structure into Cart</td>
+              <td>Abandoned Cart</td>
+              <td>Does the Abandoned Checkout structure ($1.27 RPR) lift Cart ($0.69) when folded in.</td>
+              <td>Cart RPR, recovery rate</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Beyond-price cart messaging</td>
+              <td>Abandoned Cart</td>
+              <td>Add fit, returns, and guarantees to a touch that only answers price today.</td>
+              <td>Cart-to-order conversion</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Cart SMS leg expansion</td>
+              <td>Abandoned Cart</td>
+              <td>Expand the higher-converting SMS leg and test frequency for high-intent customers.</td>
+              <td>Recovery rate</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Welcome 2 &amp; 3 rework</td>
+              <td>Welcome</td>
+              <td>Fit/returns guarantee, color and collection guide, and "build your rotation" against today's discount-led content.</td>
+              <td>Welcome RPR</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Sunset + list cleaning</td>
+              <td>Program-wide</td>
+              <td>Suppress churned and non-engaging profiles; read the effect on deliverability and send cost.</td>
+              <td>Deliverability, overage</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Browse targeting &amp; content</td>
+              <td>Browse abandonment</td>
+              <td>Reserve the trigger for repeat and high-dwell browsers, and lead with the color/collection browsed rather than price.</td>
+              <td>Browse-to-order</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr class="cat"><td colspan="6">Net new flows</td></tr>
+            <tr>
+              <td class="c-test">Replenishment flow (59d)</td>
+              <td>Second purchase</td>
+              <td>A flow triggered on sets purchased plus elapsed time against the ~59-day reorder clock.</td>
+              <td>Second-order rate</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Post-purchase cross-sell</td>
+              <td>Post-purchase</td>
+              <td>Coordinated item recommendations for set completion, then wardrobe expansion.</td>
+              <td>Post-purchase RPR, AOV</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">5-star review trigger</td>
+              <td>Post-purchase</td>
+              <td>Does a replenishment or bulk-buy prompt off a 5-star review beat the standard cadence.</td>
+              <td>Reorder rate</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr>
+              <td class="c-test">Lapsed winback flow</td>
+              <td>Winback</td>
+              <td>A new flow triggered on RFM cohort movement, using sets purchased and reorder-window cadence.</td>
+              <td>Reactivation rate</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr class="cat"><td colspan="6">Messaging &amp; calendar tests</td></tr>
+            <tr>
+              <td class="c-test">Send-day shift</td>
+              <td>Campaigns</td>
+              <td>Monday/Tuesday against current Saturday volume.</td>
+              <td>Revenue per send</td>
+              <td class="c-pri p1">Quick win</td>
+              <td class="c-pri p1">P1</td>
+            </tr>
+            <tr>
+              <td class="c-test">Campaign CTA &amp; module test</td>
+              <td>Campaigns</td>
+              <td>Clearer offers and product-led modules on awareness themes vs. today's creative.</td>
+              <td>Click rate</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr>
+              <td class="c-test">Winback by segment</td>
+              <td>Winback</td>
+              <td>Lapsed one-time vs. former repeat buyers, messaged differently rather than one-size-fits-all.</td>
+              <td>Reactivation rate</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr>
+              <td class="c-test">Wardrobe expansion vs. discount</td>
+              <td>Post-purchase / campaigns</td>
+              <td>Does the FIGS-style "expand your wardrobe" frame (layers, underscrubs, outerwear) beat a discount-led reorder prompt.</td>
+              <td>AOV, reorder rate</td>
+              <td class="c-pri p2">Medium</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr>
+              <td class="c-test">Loyalty signup vs. flat discount</td>
+              <td>Acquisition</td>
+              <td>Routing "15% off" into the program vs. a flat code in the popup. Runs once loyalty is live.</td>
+              <td>Signup-to-first-order</td>
+              <td class="c-pri p3">Large</td>
+              <td class="c-pri p2">P2</td>
+            </tr>
+            <tr>
+              <td class="c-test">Paid creative threading</td>
+              <td>Cross-flow</td>
+              <td>Carry the color and style clicked in paid into welcome and abandonment vs. generic creative.</td>
+              <td>Click rate, conversion</td>
+              <td class="c-pri p3">Large</td>
+              <td class="c-pri p3">P3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note-box"><b>Feeds the dashboard:</b> the global holdout, new-campaign holdouts, and existing-vs-new results all report into the reporting dashboard, so incremental lift and lifecycle's impact over time stay visible, not just Klaviyo-attributed revenue. <b>Sequencing note:</b> the Cart attribution validation is listed as P1 for a reason &mdash; it gates a clean read on the Cart rebuild, which is the largest single opportunity in the program.</div>
+    </section>
+  </div>
+  <!-- ============ EXECUTION PLAN ============ -->
+  <div class="panel" id="execution">
+    <section>
+      <div class="eyebrow">Execution Plan</div>
+      <h2 class="sec">What we're working on over time.<span class="draft">Draft</span></h2>
+      <p class="lead">The bars show when each initiative is in flight across the first twelve weeks, grouped into three phases. Week one is deliberately loaded with work that requires no build &mdash; promoting known winners, folding in the checkout structure, sunset logic, and the send-day shift. Planning for the bigger rebuilds starts early so nothing kicks off cold, and the big swings land once their dependencies are in place, with loyalty following the Shopify migration. Timeframes are a starting point to adjust against bandwidth and the Rise.ai launch date.</p>
+      <div class="gantt"><div class="gantt-inner">
+        <div class="gantt-phase">
+          <div class="g-corner"></div>
+          <div class="g-phase p1" style="grid-column:2 / 6">Phase 1 · Foundations (0-30 days)</div>
+          <div class="g-phase p2" style="grid-column:6 / 10">Phase 2 · Core flows (30-60 days)</div>
+          <div class="g-phase p3" style="grid-column:10 / 14">Phase 3 · Big swings (60-90+ days)</div>
+        </div>
+        <div class="gantt-weeks">
+          <div class="g-corner"></div>
+          <div class="wk">W1</div><div class="wk">W2</div><div class="wk">W3</div><div class="wk">W4</div>
+          <div class="wk">W5</div><div class="wk">W6</div><div class="wk">W7</div><div class="wk">W8</div>
+          <div class="wk">W9</div><div class="wk">W10</div><div class="wk">W11</div><div class="wk">W12</div>
+        </div>
+        <div class="gantt-row"><div class="g-label">Testing framework</div><div class="g-bar found" style="grid-column:2 / 6">Stand up</div></div>
+        <div class="gantt-row"><div class="g-label">Promote winning variants</div><div class="g-bar qw" style="grid-column:2 / 4">Ship</div></div>
+        <div class="gantt-row"><div class="g-label">Cart attribution validation</div><div class="g-bar found" style="grid-column:2 / 4">Resolve</div></div>
+        <div class="gantt-row"><div class="g-label">Checkout structure into Cart</div><div class="g-bar qw" style="grid-column:3 / 6">Fold in + test</div></div>
+        <div class="gantt-row"><div class="g-label">Cart SMS leg + beyond-price copy</div><div class="g-bar qw" style="grid-column:4 / 8">Expand + test</div></div>
+        <div class="gantt-row"><div class="g-label">Sunset + list cleaning</div><div class="g-bar qw" style="grid-column:2 / 5">Build</div></div>
+        <div class="gantt-row"><div class="g-label">Send-day shift (off Saturday)</div><div class="g-bar qw" style="grid-column:2 / 5">Test</div></div>
+        <div class="gantt-row"><div class="g-label">Welcome 2 &amp; 3 rework</div><div class="g-bar found" style="grid-column:2 / 5">Plan</div><div class="g-bar qw" style="grid-column:5 / 9">Rebuild + test</div></div>
+        <div class="gantt-row"><div class="g-label">Browse abandonment targeting</div><div class="g-bar found" style="grid-column:3 / 5">Size after fix</div><div class="g-bar qw" style="grid-column:5 / 8">Rebuild + test</div></div>
+        <div class="gantt-row"><div class="g-label">Post-purchase cross-sell flow</div><div class="g-bar found" style="grid-column:3 / 6">Plan</div><div class="g-bar qw" style="grid-column:6 / 11">Build + test</div></div>
+        <div class="gantt-row"><div class="g-label">Replenishment flow (59d clock)</div><div class="g-bar found" style="grid-column:4 / 7">Plan</div><div class="g-bar qw" style="grid-column:7 / 12">Build + test</div></div>
+        <div class="gantt-row"><div class="g-label">Winback on RFM cohort movement</div><div class="g-bar found" style="grid-column:5 / 8">RFM setup</div><div class="g-bar qw" style="grid-column:8 / 13">Build + test</div></div>
+        <div class="gantt-row"><div class="g-label">Loyalty relaunch (Rise.ai)</div><div class="g-bar found" style="grid-column:2 / 9">PRD + plan (build after Shopify)</div><div class="g-bar swing" style="grid-column:9 / 14">Launch + embed</div></div>
+        <div class="gantt-row"><div class="g-label">Paid creative into lifecycle</div><div class="g-bar found" style="grid-column:5 / 8">Taxonomy + data check</div><div class="g-bar swing" style="grid-column:8 / 14">Manual pilot + test</div></div>
+      </div></div>
+      <div class="gantt-legend">
+        <span class="lg found">Foundation &amp; planning</span>
+        <span class="lg qw">Flow builds &amp; tests</span>
+        <span class="lg swing">Big swings</span>
+      </div>
+      <div class="note-box"><b>Dependencies to watch:</b> the Cart attribution question gates a clean read on the Cart rebuild, which is why it sits in week one alongside the testing framework. Browse abandonment sizing waits on the underlying trigger issue being resolved. The loyalty build follows the Shopify migration, so the PRD and planning start now and launch follows the platform &mdash; and loyalty gates the store-credit references in cart, post-purchase, and winback. Occupation capture ships with loyalty signup and unlocks the identity and tenure segmentation everything downstream depends on. RFM scoring has to be stood up in Klaviyo before winback can trigger on cohort movement. <b>Where the big swings ride along with earlier work:</b> the Welcome rework is where loyalty-led content lands once the program is live, and the paid creative pilot reuses the welcome and abandonment tests rather than needing net-new builds.</div>
+    </section>
+  </div>
+</div></main>
+<footer><div class="wrap">Healing Hands lifecycle strategy &middot; Prepared by Verbose Marketing for Careismatic</div></footer>
+<script id="tabs-script">
+(function(){
+  var tabs = document.querySelectorAll('nav.tabs .tab');
+  var panels = document.querySelectorAll('.panel');
+  tabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabs.forEach(function(b){ b.classList.remove('active'); });
+      panels.forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var t = document.getElementById(btn.getAttribute('data-tab'));
+      if(t){ t.classList.add('active'); }
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+})();
+</script>
+</body>
+</html>
