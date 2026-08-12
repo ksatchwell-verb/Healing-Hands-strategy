@@ -585,7 +585,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
       <div class="gantt"><div class="gantt-inner">
         <div class="gantt-phase">
           <div class="g-corner"></div>
-          <div class="g-phase p1" style="grid-column:2 / 6">Phase 1 · Foundations (0-30 days)</div>
+          <div class="g-phase p1" style="grid-column:2 / 6">Phase 1 · Quick wins (0-30 days)</div>
           <div class="g-phase p2" style="grid-column:6 / 10">Phase 2 · Core flows (30-60 days)</div>
           <div class="g-phase p3" style="grid-column:10 / 14">Phase 3 · Big swings (60-90+ days)</div>
         </div>
@@ -595,16 +595,12 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
           <div class="wk">W5</div><div class="wk">W6</div><div class="wk">W7</div><div class="wk">W8</div>
           <div class="wk">W9</div><div class="wk">W10</div><div class="wk">W11</div><div class="wk">W12</div>
         </div>
-        <div class="gantt-row"><div class="g-label">Testing framework</div><div class="g-bar found" style="grid-column:2 / 6">Stand up</div></div>
-        <div class="gantt-row"><div class="g-label">Rebalance live tests to 50/50</div><div class="g-bar found" style="grid-column:2 / 4">Reset</div><div class="g-bar qw" style="grid-column:4 / 8">Run to threshold</div></div>
-        <div class="gantt-row"><div class="g-label">Cart trigger + attribution check</div><div class="g-bar found" style="grid-column:2 / 4">Resolve first</div></div>
-        <div class="gantt-row"><div class="g-label">Abandoned Cart diagnosis then fix</div><div class="g-bar qw" style="grid-column:3 / 6">Diagnose + fix</div></div>
-        <div class="gantt-row"><div class="g-label">Cart SMS leg + beyond-price copy</div><div class="g-bar qw" style="grid-column:4 / 8">Expand + test</div></div>
         <div class="gantt-row"><div class="g-label">Welcome 2 &amp; 3 rebuild</div><div class="g-bar found" style="grid-column:2 / 4">Plan</div><div class="g-bar qw" style="grid-column:4 / 9">Rebuild + test</div></div>
-        <div class="gantt-row"><div class="g-label">Browse abandonment targeting</div><div class="g-bar found" style="grid-column:3 / 5">Size after fix</div><div class="g-bar qw" style="grid-column:5 / 8">Rebuild + test</div></div>
+        <div class="gantt-row"><div class="g-label">Optimize Abandoned Cart</div><div class="g-bar qw" style="grid-column:2 / 7">Rebuild msg 1 + scale SMS + test</div></div>
         <div class="gantt-row"><div class="g-label">Post-purchase flow (launch)</div><div class="g-bar found" style="grid-column:2 / 4">Plan</div><div class="g-bar qw" style="grid-column:4 / 9">Build + test</div></div>
-        <div class="gantt-row"><div class="g-label">Reorder window test (2mo vs 4mo)</div><div class="g-bar found" style="grid-column:4 / 6">Set up</div><div class="g-bar qw" style="grid-column:6 / 11">Test</div></div>
-        <div class="gantt-row"><div class="g-label">Winback revamp (dynamic segments)</div><div class="g-bar found" style="grid-column:4 / 6">Audit current</div><div class="g-bar qw" style="grid-column:6 / 11">Revamp + test</div></div>
+        <div class="gantt-row"><div class="g-label">Use what Cherokee has proven</div><div class="g-bar qw" style="grid-column:2 / 6">Launch inherited winners</div></div>
+        <div class="gantt-row"><div class="g-label">Winback revamp + reorder window</div><div class="g-bar found" style="grid-column:4 / 6">Audit current</div><div class="g-bar qw" style="grid-column:6 / 11">Revamp + 2mo test</div></div>
+        <div class="gantt-row"><div class="g-label">Cross-sell across the journey</div><div class="g-bar swing" style="grid-column:3 / 9">Test in email (set completion)</div></div>
         <div class="gantt-row"><div class="g-label">Loyalty relaunch (Rise.ai)</div><div class="g-bar found" style="grid-column:2 / 9">PRD + plan (build after Shopify)</div><div class="g-bar swing" style="grid-column:9 / 14">Launch + embed</div></div>
         <div class="gantt-row"><div class="g-label">Personalization by persona</div><div class="g-bar found" style="grid-column:5 / 8">Taxonomy + data check</div><div class="g-bar swing" style="grid-column:8 / 14">Manual pilot + test</div></div>
       </div></div>
@@ -613,7 +609,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         <span class="lg qw">Flow builds &amp; tests</span>
         <span class="lg swing">Big swings</span>
       </div>
-      <div class="note-box"><b>How this connects to work in flight.</b> Several items overlap with Cherokee tests. Default sequencing is that <b>Cherokee proves and Healing Hands inherits</b>: tests conclude there, winners ship here as quick wins. <b>Dependencies:</b> the Cart trigger and attribution question gates any Cart rebuild, which is why it sits in week one. Browse sizing waits on the trigger issue. Loyalty follows the Shopify migration and gates store-credit references in cart, post-purchase and winback. The global holdout needs its own approval conversation with Dang.</div>
+      <div class="note-box"><b>How this connects to work in flight.</b> Several items overlap with Cherokee tests. Default sequencing is that <b>Cherokee proves and Healing Hands inherits</b>: tests conclude there, and the winners ship here as quick wins. <b>Dependencies:</b> Loyalty follows the Shopify migration and gates the store-credit references in cart, post-purchase and winback, so it lands in phase 3. The global holdout needs its own approval conversation with Dang.</div>
     </section>
   </div>
 </div></main>
