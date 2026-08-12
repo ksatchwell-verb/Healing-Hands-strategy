@@ -6,17 +6,17 @@
 <title>Healing Hands Lifecycle Strategy</title>
 <style>
 :root{
-  --navy:#000255; --navy2:#00058D; --accent:#00058D; --accent-bg:#e7e8f6;
-  --blue:#1f34d6; --red:#c0473f; --green:#2e8b6f; --gold:#b9791b; --slate:#5a6b7c;
-  --ink:#101233; --mut:#5d6688; --line:#e6e7ee; --bg:#f4f5f9; --card:#ffffff;
-  --shadow:0 1px 3px rgba(0,2,85,.07),0 6px 18px rgba(0,2,85,.05);
+  --navy:#0b3b3a; --navy2:#0f5d5b; --accent:#0f766e; --accent-bg:#d7efec;
+  --blue:#7c6ef2; --red:#c0473f; --green:#2e8b6f; --gold:#b9791b; --slate:#5a6b7c;
+  --ink:#0f2b29; --mut:#5d7370; --line:#e3ece9; --bg:#f2f6f5; --card:#ffffff;
+  --shadow:0 1px 3px rgba(11,59,58,.07),0 6px 18px rgba(11,59,58,.05);
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
 header.top{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:38px 0 30px}
 header.top h1{margin:0;font-size:27px;letter-spacing:-.4px;font-weight:700}
-header.top .sub{color:#c3cbea;font-size:14px;margin-top:8px;max-width:780px}
+header.top .sub{color:#bfe0dc;font-size:14px;margin-top:8px;max-width:780px}
 header.top .links{margin-top:14px;font-size:12px}
 header.top .links a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 13px;margin-right:8px;display:inline-block}
 header.top .links a:hover{background:rgba(255,255,255,.12)}
@@ -47,7 +47,7 @@ p.lead b{color:var(--ink)}
 .pillar .p-num{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)}
 .pillar .p-stage{display:inline-block;align-self:flex-start;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin:8px 0 10px;background:var(--accent-bg);color:var(--accent)}
 .pillar .p-stage.retention{background:#e6f5ee;color:var(--green)}
-.pillar .p-stage.acquisition{background:#e7e9fd;color:var(--blue)}
+.pillar .p-stage.acquisition{background:#eae8fc;color:var(--blue)}
 .pillar .p-stage.foundation{background:#eef0f4;color:var(--slate)}
 .pillar h3{margin:0 0 8px;font-size:17px;color:var(--navy);letter-spacing:-.2px;line-height:1.25}
 .pillar .p-gap{font-size:13px;color:var(--mut);margin:0 0 12px}
@@ -58,14 +58,16 @@ p.lead b{color:var(--ink)}
 .pillar .p-target.acquisition{color:var(--blue)}
 .pillar .p-target.foundation{color:var(--slate)}
 .kpi-eyebrow{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--mut);margin:26px 0 12px}
-.headline-find{background:linear-gradient(120deg,#f3f4fc,#eef0fb);border:1px solid #d9dcf3;border-radius:14px;padding:22px 24px;margin:22px 0 6px}
+.kpi-summary{font-size:13.5px;color:#2a3345;margin:-2px 0 14px;max-width:840px}
+.kpi-summary b{color:var(--navy)}
+.headline-find{background:linear-gradient(120deg,#eef6f4,#e3efec);border:1px solid #cfe4df;border-radius:14px;padding:22px 24px;margin:22px 0 6px}
 .headline-find .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:6px}
 .headline-find h3{margin:0 0 8px;font-size:19px;color:var(--navy);letter-spacing:-.3px}
 .headline-find p{margin:0;font-size:14px;color:#3a4358;max-width:800px}
 .headline-find p b{color:var(--navy)}
 .callout{display:flex;gap:13px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);margin:16px 0}
 .callout .ico{flex:0 0 26px;height:26px;border-radius:7px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
-.callout.opp{border-left-color:var(--blue)} .callout.opp .ico{background:#e7e9fd;color:var(--blue)}
+.callout.opp{border-left-color:var(--blue)} .callout.opp .ico{background:#eae8fc;color:var(--blue)}
 .callout.risk{border-left-color:var(--red)} .callout.risk .ico{background:#fbeceb;color:var(--red)}
 .callout h5{margin:0 0 3px;font-size:14px}
 .callout p{margin:0;font-size:13.4px;color:#3d4d5c;max-width:none}
@@ -198,10 +200,10 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         <div class="pillar">
           <div class="p-num">Theme 01 &middot; Crawl</div>
           <span class="p-stage foundation">Foundation</span>
-          <h3>Optimize the flows already in place</h3>
-          <p class="p-gap">The architecture is right and the flows are earning. What is missing is the measurement to prove it: an open question on the Cart trigger population, Welcome-to-Cart attribution, and and four A/B tests still short of a callable result.</p>
-          <p class="p-opp">Settle the measurement questions, then optimize the existing flows. Fewer, bigger tests with a pre-set threshold turn the work already running into decisions.</p>
-          <div class="p-target foundation">The layer that makes Themes 02 and 03 readable</div>
+          <h3>Fix and strengthen the foundational flows</h3>
+          <p class="p-gap">As we dig into the data, we keep finding foundational fixes underneath a program that looks healthy on the surface. The Abandoned Cart flow, for one, was set up on the wrong trigger, so it never reached part of the people it should have. We have already fixed that one, and we expect to find more like it as the audit continues.</p>
+          <p class="p-opp">Work through the foundational flows first and get the triggers, timing and audiences right before layering optimization on top. Solid plumbing is what makes the gains in Themes 02 and 03 real instead of cosmetic.</p>
+          <div class="p-target foundation">The base the rest of the roadmap builds on</div>
         </div>
         <div class="pillar">
           <div class="p-num">Theme 02 &middot; Walk</div>
@@ -221,6 +223,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         </div>
       </div>
       <div class="kpi-eyebrow">The numbers behind it</div>
+      <p class="kpi-summary">Healing Hands brings in about <b>half the revenue Cherokee does</b> ($521.7K vs $1.07M), but it <b>holds onto customers better</b>. Around 1 in 3 buyers reorder (33% vs Cherokee's 25%) and median lifetime value is higher ($131 vs $97). Acquisition is the mirror image: Cherokee turns about <b>30% of leads into a first order, versus about 20% for Healing Hands</b>. Retention is the strength here. Acquisition is the gap to close.</p>
       <div class="kpis">
         <div class="kpi"><div class="lab">Program revenue</div><div class="val">$521.7K</div><div class="note">Jan-May 2026 &middot; Cherokee $1.07M</div></div>
         <div class="kpi"><div class="lab">Lead conversion</div><div class="val">~20%</div><div class="note">July &middot; Cherokee ~30%</div></div>
@@ -228,16 +231,12 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         <div class="kpi"><div class="lab">Customer LTV (median)</div><div class="val">$131</div><div class="note">Cherokee $97</div></div>
       </div>
       <div class="kpi-eyebrow">Email engagement</div>
+      <p class="kpi-summary">Healing Hands gets <b>more engagement than Cherokee</b> on email. Open rate is higher (58% vs 52%), click rate is higher (0.64% vs 0.53%), and both brands unsubscribe at a similar, low rate. Getting opened is not the problem. The work is turning that engagement into clicks and orders after the open.</p>
       <div class="kpis">
-        <div class="kpi"><div class="lab">Open rate</div><div class="val">58%</div><div class="note">Jan-May &middot; 63.4% last 30 days</div></div>
-        <div class="kpi"><div class="lab">Click rate</div><div class="val">0.64%</div><div class="note">Jan-May &middot; 0.51% last 30 days &middot; the gap to close</div></div>
-        <div class="kpi"><div class="lab">Revenue per recipient</div><div class="val">$0.04</div><div class="note">campaigns &middot; ~$0.68 on flows</div></div>
-        <div class="kpi"><div class="lab">Flow revenue per send</div><div class="val">~$0.68</div><div class="note">vs. $0.04 on campaigns</div></div>
-      </div>
-      <div class="callout opp">
-        <div class="ico">&rsaquo;</div>
-        <div><h5>Attention is not the problem. Conversion is the opportunity.</h5>
-        <p>Open rates sit well above benchmark and are still rising, so the subject lines and sender reputation are working. The room to grow is in what happens after the open, which is a creative and offer question rather than a deliverability one.</p></div>
+        <div class="kpi"><div class="lab">Open rate</div><div class="val">58%</div><div class="note">Cherokee 52%</div></div>
+        <div class="kpi"><div class="lab">Click rate</div><div class="val">0.64%</div><div class="note">Cherokee 0.53% &middot; the gap to close</div></div>
+        <div class="kpi"><div class="lab">Unsub rate</div><div class="val">~0.22%</div><div class="note">Cherokee ~0.28%</div></div>
+        <div class="kpi"><div class="lab">Revenue per recipient</div><div class="val">$0.04</div><div class="note">Cherokee ~$0.04 &middot; ~$0.68 on flows</div></div>
       </div>
     </section>
     <section>
@@ -266,7 +265,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
           </ul>
         </div>
       </div>
-      <div class="note-box"><b>Read carefully.</b> Not like-for-like: FIGS' $220 is annual revenue per active customer, ours is $131 median lifetime value. FIGS figures come from audited Q1 2026 filings; their mechanics are inferred from their site. Our repeat rate and LTV are sample-based reads.</div>
     </section>
     <section>
       <div class="eyebrow">03 &middot; Measurement to Track Success</div>
@@ -308,7 +306,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
             </tr>
             <tr>
               <td class="c-test">Email engagement<br><span style="font-size:11px;color:var(--mut)">open, click, unsub, RPR</span></td>
-              <td>58% open &middot; 0.64% click &middot; $0.04 RPR</td>
+              <td>58% open &middot; 0.64% click &middot; ~0.22% unsub &middot; $0.04 RPR</td>
               <td>52% open &middot; 0.53% click &middot; unsub ~0.28%</td>
               <td>Click rate toward the 2% floor of the norm</td>
               <td>Offers and CTAs, segmentation, creative</td>
@@ -316,7 +314,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
           </tbody>
         </table>
       </div>
-      <div class="note-box"><b>Source caveat:</b> these are Klaviyo numbers today, not customer purchase data, which is the real source of truth. Conversion uses SFCC Placed Order, since the account default is unmapped. Repeat rate and LTV are sample-based reads, so a cleaner order-level pull is still owed. <b>Ongoing:</b> the monthly report should pair these metrics with a log of what changed that month, so movement has context.</div>
+      <div class="note-box"><b>Source caveat:</b> these are Klaviyo numbers today, not customer purchase data, which is the real source of truth. Conversion uses SFCC Placed Order, since the account default is unmapped. Repeat rate and LTV are sample-based reads, so a cleaner order-level pull is still owed. Open/click here are the campaign-level rates; the dashboard also tracks a program-wide monthly view. <b>Ongoing:</b> the monthly report should pair these metrics with a log of what changed that month, so movement has context.</div>
     </section>
   </div>
   <!-- ============ QUICK WINS ============ -->
@@ -325,7 +323,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
       <div class="eyebrow">Quick Wins</div>
       <h2 class="sec">Five moves that build on what already works.</h2>
       <p class="lead">Acquisition first, then retention. None require a net-new build.</p>
-
       <div class="qw-card"><div class="qw-num">1</div><div class="qw-body">
         <h4>Rebuild Welcome emails 2 &amp; 3</h4>
         <div class="qw-goal">Goal: extend email one's success across the rest of the series.</div>
@@ -337,7 +334,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         </ul>
         <div class="qw-tags"><span class="qw-tag">Metric: lead conversion</span><span class="qw-tag">Test: welcome messaging</span></div>
       </div></div>
-
       <div class="qw-card"><div class="qw-num">2</div><div class="qw-body">
         <h4>Optimize Abandoned Cart</h4>
         <div class="qw-goal">Goal: bring the main cart flow up to the $1.27 Abandoned Checkout already achieves.</div>
@@ -350,7 +346,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         </ul>
         <div class="qw-tags"><span class="qw-tag">Metric: Cart RPR</span><span class="qw-tag">Owner: Healing Hands test</span></div>
       </div></div>
-
       <div class="qw-card"><div class="qw-num">3</div><div class="qw-body">
         <h4>Launch the post-purchase flow</h4>
         <div class="qw-goal">Goal: set up the second order at no acquisition cost.</div>
@@ -361,7 +356,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         </ul>
         <div class="qw-tags"><span class="qw-tag">Metric: post-purchase RPR</span><span class="qw-tag">Owner: Cherokee test</span></div>
       </div></div>
-
       <div class="qw-card"><div class="qw-num">4</div><div class="qw-body">
         <h4>Use what Cherokee has already proven</h4>
         <div class="qw-goal">Goal: stop paying to learn the same thing twice.</div>
@@ -373,7 +367,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mut);fon
         </ul>
         <div class="qw-tags"><span class="qw-tag">Effort: lowest in the roadmap</span><span class="qw-tag">Test: settle the open tests</span></div>
       </div></div>
-
       <div class="qw-card"><div class="qw-num">5</div><div class="qw-body">
         <h4>Revamp the winback series and its timing</h4>
         <div class="qw-goal">Goal: reach a lapsed audience the current flow is not converting.</div>
